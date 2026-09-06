@@ -20,6 +20,7 @@ modules:
       packages:
         - micro
         - fastfetch
+        - btop
 
   # Enables systemd services and timers
   - type: systemd
