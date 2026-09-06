@@ -1,25 +1,32 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-# image will be published to ghcr.io/<user>/<name>
 name: bluecore
-# description will be included in the image's metadata
 description: Custom ucore image for my server.
 
-# the base image to build on top of (FROM) and the version tag to use
+# Base image
 base-image: ghcr.io/ublue-os/ucore
-image-version: stable # You can pin to a specific version of Fedora as well
+image-version: stable
 
-# module configuration, executed in order
-# you can include multiple instances of the same module
 modules:
+  # Copies custom system configurations
   - type: files
     files:
       - source: system
-        destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
+        destination: /
 
+  # Installs useful CLI administration tools
   - type: dnf
     install:
       packages:
         - micro
+        - fastfetch
 
-  - type: signing # this sets up the proper policy & signing files for signed images to work fully
+  # Enables systemd services and timers
+  - type: systemd
+    system:
+      enable:
+        - cockpit.service
+
+  # Sets up container image signing policies
+  - type: signing
+  
