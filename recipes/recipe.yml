@@ -24,7 +24,7 @@ modules:
   # Enables systemd services and timers
   - type: systemd
     system:
-      enable:
+      enabled:
         - cockpit.service
 
   # Sets up container image signing policies
