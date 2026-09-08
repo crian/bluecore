@@ -27,6 +27,7 @@ modules:
     system:
       enabled:
         - cockpit.service
+        - tuned.service
 
   # Sets up container image signing policies
   - type: signing
