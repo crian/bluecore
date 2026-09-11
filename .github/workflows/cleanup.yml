@@ -27,5 +27,4 @@ jobs:
           # Delete any tagged images older than 14 days
           older-than: 14 days
           # Exclude primary release tags from automated deletion
-          keep-tags: 'latest'
-          
+          exclude-tags: 'latest'
