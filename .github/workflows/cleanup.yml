@@ -2,9 +2,8 @@ name: Cleanup Old GHCR Images
 
 on:
   schedule:
-    # Runs every Sunday at 03:00 UTC
     - cron: '0 3 * * 0'
-  workflow_dispatch: # Allows manual triggering from the Actions tab
+  workflow_dispatch:
 
 jobs:
   cleanup:
@@ -17,10 +16,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # 1. Fetch all version IDs that do NOT contain 'latest' or a date tag (e.g. 2026...)
-          # This selectively targets orphaned sha256 digests and .sig manifests
+          # 1. Fetch orphaned sha256 digests and .sig manifests (no main release tags)
           UNTAGGED_IDS=$(gh api "/user/packages/container/bluecore/versions?per_page=100" \
-            --jq '.[] | select(.metadata.container.tags | select(.) | test("latest|202[0-9]") | not) | .id')
+            --jq '.[] | select((.metadata.container.tags // []) | map(select(test("latest|202[0-9]"))) | length == 0) | .id')
 
           for ID in $UNTAGGED_IDS; do
             echo "Deleting orphaned digest ID: $ID"
@@ -29,7 +27,7 @@ jobs:
 
           # 2. Fetch primary tagged builds (containing 2026... or latest), keep 5 newest, delete older ones
           OLD_BUILD_IDS=$(gh api "/user/packages/container/bluecore/versions?per_page=100" \
-            --jq '[.[] | select(.metadata.container.tags | select(.) | test("latest|202[0-9]"))] | sort_by(.created_at) | reverse | .[5:] | .[].id')
+            --jq '[.[] | select((.metadata.container.tags // []) | map(select(test("latest|202[0-9]"))) | length > 0)] | sort_by(.created_at) | reverse | .[5:] | .[].id')
 
           for ID in $OLD_BUILD_IDS; do
             echo "Deleting old tagged build ID: $ID"
