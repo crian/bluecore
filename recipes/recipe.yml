@@ -27,6 +27,7 @@ modules:
     system:
       enabled:
         - cockpit.service
+        - podman-auto-update.timer
         - tuned.service
 
   # Sets up container image signing policies
