@@ -16,15 +16,13 @@ jobs:
         uses: dataaxiom/ghcr-cleanup-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          # Keep the most recent tagged builds
-          keep-n-tagged: 5
-          # Delete all untagged image layers
+          # Delete untagged image layers
           delete-untagged: true
-          # Force deletion of orphaned sha256 digests/attestations
+          # Keep the most recent untagged builds/manifests as rollback history
+          keep-n-untagged: 5
+          # Clean up orphaned multi-platform/attestation digests
           delete-orphaned-images: true
-          # Delete incomplete multi-platform layer fragments
           delete-partial-images: true
-          # Delete any tagged images older than 14 days
-          older-than: 14 days
-          # Exclude primary release tags from automated deletion
+          # Never delete the active 'latest' tag
           exclude-tags: 'latest'
+          
