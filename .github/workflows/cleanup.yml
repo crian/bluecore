@@ -1,0 +1,27 @@
+name: Cleanup Old GHCR Images
+
+on:
+  schedule:
+    # Runs every Sunday at 03:00 UTC
+    - cron: '0 3 * * 0'
+  workflow_dispatch: # Allows manual triggering from the Actions tab
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - name: Clean GHCR Packages
+        uses: dataaxiom/ghcr-cleanup-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # Keep the most recent tagged builds (e.g., latest and previous daily builds)
+          keep-n-tagged: 5
+          # Delete all untagged/orphaned image layers
+          delete-untagged: true
+          # Delete any tagged images older than 14 days
+          older-than: 14 days
+          # Exclude the primary release tag from automated deletion
+          keep-tags: 'latest'
+          
