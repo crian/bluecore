@@ -26,7 +26,14 @@ modules:
         - cockpit-podman
         - cockpit-ostree
         - fastfetch
+        - lm_sensors
         - micro
+        - pcp-zeroconf
         - tuned
+
+  - type: systemd
+    system:
+      enabled:
+        - cockpit.socket
 
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
